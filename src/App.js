@@ -64,11 +64,7 @@ const Board = () => {
 
   const movePawn = (fromMove, con) => {
     if (fromMove[0] - con[0] === 1) {
-      if (
-        fromMove[1] - con[1] === 1 ||
-        fromMove[1] - con[1] === 0 ||
-        fromMove[1] - con[1] === -1
-      ) {
+      if (fromMove[1] - con[1] === 0) {
         return movePiece(fromSquare, con);
       }
     }
@@ -96,6 +92,91 @@ const Board = () => {
         return movePiece(fromSquare, con);
       }
     }
+    if (fromMove[0] - con[0] === 0) {
+      if (
+        fromMove[1] - con[1] === 0 ||
+        fromMove[1] - con[1] === 1 ||
+        fromMove[1] - con[1] === 2 ||
+        fromMove[1] - con[1] === 3 ||
+        fromMove[1] - con[1] === 4 ||
+        fromMove[1] - con[1] === 5 ||
+        fromMove[1] - con[1] === 6 ||
+        fromMove[1] - con[1] === 7 ||
+        fromMove[1] - con[1] === -1 ||
+        fromMove[1] - con[1] === -2 ||
+        fromMove[1] - con[1] === -3 ||
+        fromMove[1] - con[1] === -4 ||
+        fromMove[1] - con[1] === -5 ||
+        fromMove[1] - con[1] === -6 ||
+        fromMove[1] - con[1] === -7
+      ) {
+        return movePiece(fromSquare, con);
+      }
+    }
+  };
+  const moveKnight = (fromMove, con) => {
+    if (fromMove[0] - con[0] === 1 || fromMove[0] - con[0] === -1) {
+      if (fromMove[1] - con[1] === -2 || fromMove[1] - con[1] === 2) {
+        return movePiece(fromSquare, con);
+      }
+    } else if (fromMove[0] - con[0] === 2 || fromMove[0] - con[0] === -2) {
+      if (fromMove[1] - con[1] === 1 || fromMove[1] - con[1] === -1) {
+        return movePiece(fromSquare, con);
+      }
+    }
+  };
+  const moveBishop = (fromMove, con) => {
+    let i = fromMove[0] - con[0];
+    if (fromMove[0] - con[0] === i || fromMove[0] - con[0] === -i) {
+      if (fromMove[1] - con[1] === i || fromMove[1] - con[1] === -i) {
+        return movePiece(fromSquare, con);
+      }
+    }
+  };
+  const moveQueen = (fromMove, con) => {
+    let i = fromMove[0] - con[0];
+    if (
+      fromMove[0] - con[0] === i ||
+      fromMove[0] - con[0] === -i ||
+      fromMove[0] - con[0] === 0
+    ) {
+      if (
+        fromMove[1] - con[1] === 0 ||
+        fromMove[1] - con[1] === 1 ||
+        fromMove[1] - con[1] === 2 ||
+        fromMove[1] - con[1] === 3 ||
+        fromMove[1] - con[1] === 4 ||
+        fromMove[1] - con[1] === 5 ||
+        fromMove[1] - con[1] === 6 ||
+        fromMove[1] - con[1] === 7 ||
+        fromMove[1] - con[1] === -1 ||
+        fromMove[1] - con[1] === -2 ||
+        fromMove[1] - con[1] === -3 ||
+        fromMove[1] - con[1] === -4 ||
+        fromMove[1] - con[1] === -5 ||
+        fromMove[1] - con[1] === -6 ||
+        fromMove[1] - con[1] === -7
+      ) {
+        return movePiece(fromSquare, con);
+      }
+    }
+    return console.log("nah");
+  };
+  const moveKing = (fromMove, con) => {
+    if (
+      fromMove[0] - con[0] === 1 ||
+      fromMove[0] - con[0] === 0 ||
+      fromMove[0] - con[0] === -1
+    ) {
+      if (
+        fromMove[1] - con[1] === 1 ||
+        fromMove[1] - con[1] === 0 ||
+        fromMove[1] - con[1] === -1
+      ) {
+        return movePiece(fromSquare, con);
+      }
+    }
+    return console.log("nah");
   };
   const movePiece = (fromSquare, toSquare) => {
     console.log("inside move", fromSquare, toSquare);
@@ -133,6 +214,11 @@ const Board = () => {
 
   const handleClick = (con) => {
     if (count === 0) {
+      if (mapObj[con] === undefined) {
+        return;
+      }
+    }
+    if (count === 0) {
       setFromSquare(con);
       setCount(count + 1);
       return;
@@ -142,10 +228,32 @@ const Board = () => {
     if (mapObj[fromSquare].type === "pawn") {
       movePawn(fromSquare, con);
       setCount(0);
+      return;
     }
     if (mapObj[fromSquare].type === "rook") {
       moveRook(fromSquare, con);
       setCount(0);
+      return;
+    }
+    if (mapObj[fromSquare].type === "knight") {
+      moveKnight(fromSquare, con);
+      setCount(0);
+      return;
+    }
+    if (mapObj[fromSquare].type === "bishop") {
+      moveBishop(fromSquare, con);
+      setCount(0);
+      return;
+    }
+    if (mapObj[fromSquare].type === "king") {
+      moveKing(fromSquare, con);
+      setCount(0);
+      return;
+    }
+    if (mapObj[fromSquare].type === "queen") {
+      moveQueen(fromSquare, con);
+      setCount(0);
+      return;
     }
     setCount(0);
   };
