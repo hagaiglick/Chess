@@ -134,10 +134,9 @@ const Board = () => {
     }
   };
   const moveQueen = (fromMove, con) => {
-    let i = fromMove[0] - con[0];
     if (
-      fromMove[0] - con[0] === i ||
-      fromMove[0] - con[0] === -i ||
+      fromMove[0] - con[0] === 1 ||
+      fromMove[0] - con[0] === -1 ||
       fromMove[0] - con[0] === 0
     ) {
       if (
