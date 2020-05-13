@@ -62,6 +62,41 @@ const Board = () => {
   const [fromSquare, setFromSquare] = useState();
   // const [toSquare, setToSquare] = useState();
 
+  const movePawn = (fromMove, con) => {
+    if (fromMove[0] - con[0] === 1) {
+      if (
+        fromMove[1] - con[1] === 1 ||
+        fromMove[1] - con[1] === 0 ||
+        fromMove[1] - con[1] === -1
+      ) {
+        return movePiece(fromSquare, con);
+      }
+    }
+    return console.log("nah");
+  };
+  const moveRook = (fromMove, con) => {
+    if (
+      fromMove[0] - con[0] === 0 ||
+      fromMove[0] - con[0] === 1 ||
+      fromMove[0] - con[0] === 2 ||
+      fromMove[0] - con[0] === 3 ||
+      fromMove[0] - con[0] === 4 ||
+      fromMove[0] - con[0] === 5 ||
+      fromMove[0] - con[0] === 6 ||
+      fromMove[0] - con[0] === 7 ||
+      fromMove[0] - con[0] === -1 ||
+      fromMove[0] - con[0] === -2 ||
+      fromMove[0] - con[0] === -3 ||
+      fromMove[0] - con[0] === -4 ||
+      fromMove[0] - con[0] === -5 ||
+      fromMove[0] - con[0] === -6 ||
+      fromMove[0] - con[0] === -7
+    ) {
+      if (fromMove[1] - con[1] === 0) {
+        return movePiece(fromSquare, con);
+      }
+    }
+  };
   const movePiece = (fromSquare, toSquare) => {
     console.log("inside move", fromSquare, toSquare);
     // 1. mapObj[toSquare] = mapObj[fromSquare] to the obj
@@ -104,7 +139,14 @@ const Board = () => {
     }
     //second click
     // fromSquare -> toSqaure
-    movePiece(fromSquare, con);
+    if (mapObj[fromSquare].type === "pawn") {
+      movePawn(fromSquare, con);
+      setCount(0);
+    }
+    if (mapObj[fromSquare].type === "rook") {
+      moveRook(fromSquare, con);
+      setCount(0);
+    }
     setCount(0);
   };
 
