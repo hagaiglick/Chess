@@ -141,6 +141,15 @@ const Board = () => {
       fromMove[0] - con[0] === 0
     ) {
       if (
+        fromMove[1] - con[1] === i ||
+        fromMove[1] - con[1] === -i ||
+        fromMove[1] - con[1] === 0
+      ) {
+        return movePiece(fromSquare, con);
+      }
+    }
+    if (fromMove[0] - con[0] === 0) {
+      if (
         fromMove[1] - con[1] === 0 ||
         fromMove[1] - con[1] === 1 ||
         fromMove[1] - con[1] === 2 ||
