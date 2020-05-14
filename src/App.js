@@ -63,9 +63,31 @@ const Board = () => {
   // const [toSquare, setToSquare] = useState();
 
   const movePawn = (fromMove, con) => {
-    if (fromMove[0] - con[0] === 1) {
-      if (fromMove[1] - con[1] === 0) {
-        return movePiece(fromSquare, con);
+    console.log(mapObj[fromSquare].player);
+    if (mapObj[fromSquare].player === "black") {
+      if (fromMove[0] - con[0] === -1) {
+        if (fromMove[1] - con[1] === 0) {
+          if (mapObj[con] === undefined) {
+            return movePiece(fromSquare, con);
+          }
+        } else if (fromMove[1] - con[1] === 1 || fromMove[1] - con[1] === -1) {
+          if (mapObj[fromSquare].player !== mapObj[con].player) {
+            return movePiece(fromSquare, con);
+          }
+        }
+      }
+    }
+    if (mapObj[fromSquare].player === "white") {
+      if (fromMove[0] - con[0] === 1) {
+        if (fromMove[1] - con[1] === 0) {
+          if (mapObj[con] === undefined) {
+            return movePiece(fromSquare, con);
+          }
+        } else if (fromMove[1] - con[1] === 1 || fromMove[1] - con[1] === -1) {
+          if (mapObj[fromSquare].player !== mapObj[con].player) {
+            return movePiece(fromSquare, con);
+          }
+        }
       }
     }
     return console.log("nah");
@@ -234,35 +256,40 @@ const Board = () => {
     }
     //second click
     // fromSquare -> toSqaure
-    if (mapObj[fromSquare].type === "pawn") {
-      movePawn(fromSquare, con);
-      setCount(0);
-      return;
-    }
-    if (mapObj[fromSquare].type === "rook") {
-      moveRook(fromSquare, con);
-      setCount(0);
-      return;
-    }
-    if (mapObj[fromSquare].type === "knight") {
-      moveKnight(fromSquare, con);
-      setCount(0);
-      return;
-    }
-    if (mapObj[fromSquare].type === "bishop") {
-      moveBishop(fromSquare, con);
-      setCount(0);
-      return;
-    }
-    if (mapObj[fromSquare].type === "king") {
-      moveKing(fromSquare, con);
-      setCount(0);
-      return;
-    }
-    if (mapObj[fromSquare].type === "queen") {
-      moveQueen(fromSquare, con);
-      setCount(0);
-      return;
+    if (
+      mapObj[con] == undefined ||
+      mapObj[fromSquare].player !== mapObj[con].player
+    ) {
+      if (mapObj[fromSquare].type === "pawn") {
+        movePawn(fromSquare, con);
+        setCount(0);
+        return;
+      }
+      if (mapObj[fromSquare].type === "rook") {
+        moveRook(fromSquare, con);
+        setCount(0);
+        return;
+      }
+      if (mapObj[fromSquare].type === "knight") {
+        moveKnight(fromSquare, con);
+        setCount(0);
+        return;
+      }
+      if (mapObj[fromSquare].type === "bishop") {
+        moveBishop(fromSquare, con);
+        setCount(0);
+        return;
+      }
+      if (mapObj[fromSquare].type === "king") {
+        moveKing(fromSquare, con);
+        setCount(0);
+        return;
+      }
+      if (mapObj[fromSquare].type === "queen") {
+        moveQueen(fromSquare, con);
+        setCount(0);
+        return;
+      }
     }
     setCount(0);
   };
