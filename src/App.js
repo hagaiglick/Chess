@@ -71,7 +71,9 @@ const Board = () => {
             return movePiece(fromSquare, con);
           }
         } else if (fromMove[1] - con[1] === 1 || fromMove[1] - con[1] === -1) {
-          if (mapObj[fromSquare].player !== mapObj[con].player) {
+          if (mapObj[con] === undefined) {
+            return;
+          } else if (mapObj[fromSquare] !== mapObj[con]) {
             return movePiece(fromSquare, con);
           }
         }
@@ -84,7 +86,9 @@ const Board = () => {
             return movePiece(fromSquare, con);
           }
         } else if (fromMove[1] - con[1] === 1 || fromMove[1] - con[1] === -1) {
-          if (mapObj[fromSquare].player !== mapObj[con].player) {
+          if (mapObj[con] === undefined) {
+            return;
+          } else if (mapObj[fromSquare] !== mapObj[con]) {
             return movePiece(fromSquare, con);
           }
         }
@@ -93,117 +97,63 @@ const Board = () => {
     return console.log("nah");
   };
   const moveRook = (fromMove, con) => {
-    if (
-      fromMove[0] - con[0] === 0 ||
-      fromMove[0] - con[0] === 1 ||
-      fromMove[0] - con[0] === 2 ||
-      fromMove[0] - con[0] === 3 ||
-      fromMove[0] - con[0] === 4 ||
-      fromMove[0] - con[0] === 5 ||
-      fromMove[0] - con[0] === 6 ||
-      fromMove[0] - con[0] === 7 ||
-      fromMove[0] - con[0] === -1 ||
-      fromMove[0] - con[0] === -2 ||
-      fromMove[0] - con[0] === -3 ||
-      fromMove[0] - con[0] === -4 ||
-      fromMove[0] - con[0] === -5 ||
-      fromMove[0] - con[0] === -6 ||
-      fromMove[0] - con[0] === -7
-    ) {
+    const fromToZero = fromMove[0] - con[0];
+    const fromToOne = fromMove[1] - con[1];
+
+    if (fromToZero <= 7 || fromToZero >= -7) {
       if (fromMove[1] - con[1] === 0) {
         return movePiece(fromSquare, con);
       }
     }
     if (fromMove[0] - con[0] === 0) {
-      if (
-        fromMove[1] - con[1] === 0 ||
-        fromMove[1] - con[1] === 1 ||
-        fromMove[1] - con[1] === 2 ||
-        fromMove[1] - con[1] === 3 ||
-        fromMove[1] - con[1] === 4 ||
-        fromMove[1] - con[1] === 5 ||
-        fromMove[1] - con[1] === 6 ||
-        fromMove[1] - con[1] === 7 ||
-        fromMove[1] - con[1] === -1 ||
-        fromMove[1] - con[1] === -2 ||
-        fromMove[1] - con[1] === -3 ||
-        fromMove[1] - con[1] === -4 ||
-        fromMove[1] - con[1] === -5 ||
-        fromMove[1] - con[1] === -6 ||
-        fromMove[1] - con[1] === -7
-      ) {
+      if (fromToOne <= 7 || fromToOne >= -7) {
         return movePiece(fromSquare, con);
       }
     }
   };
   const moveKnight = (fromMove, con) => {
-    if (fromMove[0] - con[0] === 1 || fromMove[0] - con[0] === -1) {
+    const fromToZero = fromMove[0] - con[0];
+    if (fromMove[0] - con[0] === 1 || fromToZero === -1) {
       if (fromMove[1] - con[1] === -2 || fromMove[1] - con[1] === 2) {
         return movePiece(fromSquare, con);
       }
-    } else if (fromMove[0] - con[0] === 2 || fromMove[0] - con[0] === -2) {
+    } else if (fromMove[0] - con[0] === 2 || fromToZero === -2) {
       if (fromMove[1] - con[1] === 1 || fromMove[1] - con[1] === -1) {
         return movePiece(fromSquare, con);
       }
     }
   };
   const moveBishop = (fromMove, con) => {
-    let i = fromMove[0] - con[0];
-    if (fromMove[0] - con[0] === i || fromMove[0] - con[0] === -i) {
+    const fromToZero = fromMove[0] - con[0];
+    let i = fromToZero;
+    if (fromMove[0] - con[0] === i || fromToZero === -i) {
       if (fromMove[1] - con[1] === i || fromMove[1] - con[1] === -i) {
         return movePiece(fromSquare, con);
       }
     }
   };
   const moveQueen = (fromMove, con) => {
-    let i = fromMove[0] - con[0];
-    if (
-      fromMove[0] - con[0] === i ||
-      fromMove[0] - con[0] === -i ||
-      fromMove[0] - con[0] === 0
-    ) {
-      if (
-        fromMove[1] - con[1] === i ||
-        fromMove[1] - con[1] === -i ||
-        fromMove[1] - con[1] === 0
-      ) {
+    const fromToZero = fromMove[0] - con[0];
+    const fromToOne = fromMove[1] - con[1];
+    let i = fromToZero;
+    if (fromToZero === i || fromToZero === -i || fromToZero === 0) {
+      if (fromToOne === i || fromToOne === -i || fromToOne === 0) {
         return movePiece(fromSquare, con);
       }
     }
     if (fromMove[0] - con[0] === 0) {
-      if (
-        fromMove[1] - con[1] === 0 ||
-        fromMove[1] - con[1] === 1 ||
-        fromMove[1] - con[1] === 2 ||
-        fromMove[1] - con[1] === 3 ||
-        fromMove[1] - con[1] === 4 ||
-        fromMove[1] - con[1] === 5 ||
-        fromMove[1] - con[1] === 6 ||
-        fromMove[1] - con[1] === 7 ||
-        fromMove[1] - con[1] === -1 ||
-        fromMove[1] - con[1] === -2 ||
-        fromMove[1] - con[1] === -3 ||
-        fromMove[1] - con[1] === -4 ||
-        fromMove[1] - con[1] === -5 ||
-        fromMove[1] - con[1] === -6 ||
-        fromMove[1] - con[1] === -7
-      ) {
+      if (fromToOne <= 7 || fromToOne >= -7) {
         return movePiece(fromSquare, con);
       }
     }
     return console.log("nah");
   };
   const moveKing = (fromMove, con) => {
-    if (
-      fromMove[0] - con[0] === 1 ||
-      fromMove[0] - con[0] === 0 ||
-      fromMove[0] - con[0] === -1
-    ) {
-      if (
-        fromMove[1] - con[1] === 1 ||
-        fromMove[1] - con[1] === 0 ||
-        fromMove[1] - con[1] === -1
-      ) {
+    const fromToZero = fromMove[0] - con[0];
+    const fromToOne = fromMove[1] - con[1];
+
+    if (fromToZero === 1 || fromToZero === 0 || fromToZero === -1) {
+      if (fromToOne === 1 || fromToOne === 0 || fromToOne === -1) {
         return movePiece(fromSquare, con);
       }
     }
@@ -329,6 +279,7 @@ const Board = () => {
             </div>
           );
         })}
+      <h1>clock</h1>
     </div>
   );
 
