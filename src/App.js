@@ -113,12 +113,13 @@ const Board = () => {
   };
   const moveKnight = (fromMove, con) => {
     const fromToZero = fromMove[0] - con[0];
-    if (fromMove[0] - con[0] === 1 || fromToZero === -1) {
-      if (fromMove[1] - con[1] === -2 || fromMove[1] - con[1] === 2) {
+    const fromToOne = fromMove[1] - con[1];
+    if (fromToZero === 1 || fromToZero === -1) {
+      if (fromToOne === -2 || fromToOne === 2) {
         return movePiece(fromSquare, con);
       }
     } else if (fromMove[0] - con[0] === 2 || fromToZero === -2) {
-      if (fromMove[1] - con[1] === 1 || fromMove[1] - con[1] === -1) {
+      if (fromToOne === 1 || fromToOne === -1) {
         return movePiece(fromSquare, con);
       }
     }
