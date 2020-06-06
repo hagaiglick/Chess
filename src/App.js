@@ -20,8 +20,8 @@ import Square from "./Square";
 // });
 
 const mapObj = {
+  //database of the board
   "00": { type: "rook", player: "black" },
-  "01": { type: "rook", player: "black" },
   "01": { type: "knight", player: "black" },
   "02": { type: "bishop", player: "black" },
   "03": { type: "king", player: "black" },
@@ -60,18 +60,90 @@ const mapObj = {
 const Board = () => {
   const [count, setCount] = useState(0);
   const [fromSquare, setFromSquare] = useState();
+  const [player, setPlayer] = useState(true);
   // const [toSquare, setToSquare] = useState();
+  const movePieceInvoke = (moveFrom, moveTo) => {
+    // the actual movePiece
+    movePiece(moveFrom, moveTo);
+  };
+  const splitAndParseToNumber = (square) => {
+    const [row, col] = square.split("");
+    console.log("splitted");
+    return [parseInt(row), parseInt(col)];
+  };
+
+  const getTheFigurePath = (moveFrom, moveTo) => {
+    const path = [];
+    let passingSquare;
+    const [moveFromRow, moveFromCol] = splitAndParseToNumber(moveFrom);
+    const [moveToRow, moveToCol] = splitAndParseToNumber(moveTo);
+    let j = moveFromCol;
+    //fill the path with the squares we past
+    //check witch is bigger , the rows move from or rows move to . if moveTo rows? then we going down, else going up
+    //check the going up movements:TODO - SET IN A OTHER FUNCTION ?
+    if (moveFromRow > moveToRow) {
+      //going only up the board
+      if (moveFromCol === moveToCol) {
+        for (let i = moveFromRow; i >= moveToRow; i--) {
+          passingSquare = i.toString() + moveFromCol.toString();
+          path.push(passingSquare);
+        }
+      }
+      //going up and move left
+      else if (moveFromCol > moveToCol) {
+        for (let i = moveFromRow; i >= moveToRow; i--) {
+          passingSquare = i.toString() + j.toString();
+          path.push(passingSquare);
+          if (j >= moveToCol) j--;
+        }
+      }
+      //move up and turn right
+      else if (moveFromCol < moveToCol) {
+        for (let i = moveFromRow; i >= moveToRow; i--) {
+          passingSquare = i.toString() + j.toString();
+          path.push(passingSquare);
+          if (j <= moveToCol) j++;
+        }
+      }
+    }
+    // Check for the going down movements:
+    else {
+      //only goes down:
+      if (moveFromCol === moveToCol) {
+        for (let i = moveFromRow; i <= moveToRow; i++) {
+          passingSquare = i.toString() + moveToCol.toString();
+          path.push(passingSquare);
+        }
+        //goes down and right
+      } else if (moveFromCol < moveToCol) {
+        for (let i = moveFromRow; i <= moveToRow; i++) {
+          passingSquare = i.toString() + j.toString();
+          path.push(passingSquare);
+          if (j <= moveToCol) j++;
+        }
+        //goes down and left
+      } else {
+        for (let i = moveFromRow; i <= moveToRow; i++) {
+          passingSquare = i.toString() + j.toString();
+          if (j >= moveToCol) j--;
+        }
+      }
+    }
+    return path;
+  };
 
   const movePawn = (fromMove, con) => {
     console.log(mapObj[fromSquare].player);
     if (mapObj[fromSquare].player === "black") {
+      // if the pawn is black or white he can go to certain direction and eat a certain way so it wont be
+      // able to move backwards or eat in a forbidden way.
       if (fromMove[0] - con[0] === -1) {
         if (fromMove[1] - con[1] === 0) {
-          if (mapObj[con] === undefined) {
+          if (!mapObj[con]) {
             return movePiece(fromSquare, con);
           }
         } else if (fromMove[1] - con[1] === 1 || fromMove[1] - con[1] === -1) {
-          if (mapObj[con] === undefined) {
+          if (!mapObj[con]) {
             return;
           } else if (mapObj[fromSquare] !== mapObj[con]) {
             return movePiece(fromSquare, con);
@@ -82,11 +154,11 @@ const Board = () => {
     if (mapObj[fromSquare].player === "white") {
       if (fromMove[0] - con[0] === 1) {
         if (fromMove[1] - con[1] === 0) {
-          if (mapObj[con] === undefined) {
+          if (!mapObj[con]) {
             return movePiece(fromSquare, con);
           }
         } else if (fromMove[1] - con[1] === 1 || fromMove[1] - con[1] === -1) {
-          if (mapObj[con] === undefined) {
+          if (!mapObj[con]) {
             return;
           } else if (mapObj[fromSquare] !== mapObj[con]) {
             return movePiece(fromSquare, con);
@@ -97,75 +169,132 @@ const Board = () => {
     return console.log("nah");
   };
   const moveRook = (fromMove, con) => {
-    const fromToZero = fromMove[0] - con[0];
-    const fromToOne = fromMove[1] - con[1];
+    // rook can only move straight up\down or straight left\right
+    const fromToZeroIndex = fromMove[0] - con[0];
+    const fromToOneIndex = fromMove[1] - con[1];
 
-    if (fromToZero <= 7 || fromToZero >= -7) {
-      if (fromMove[1] - con[1] === 0) {
+    if (fromToZeroIndex <= 7 || fromToZeroIndex >= -7) {
+      if (fromToOneIndex === 0) {
         return movePiece(fromSquare, con);
       }
     }
     if (fromMove[0] - con[0] === 0) {
-      if (fromToOne <= 7 || fromToOne >= -7) {
+      if (fromToOneIndex <= 7 || fromToOneIndex >= -7) {
         return movePiece(fromSquare, con);
       }
     }
   };
   const moveKnight = (fromMove, con) => {
-    const fromToZero = fromMove[0] - con[0];
-    const fromToOne = fromMove[1] - con[1];
-    if (fromToZero === 1 || fromToZero === -1) {
-      if (fromToOne === -2 || fromToOne === 2) {
-        return movePiece(fromSquare, con);
+    // knight logic. if it moves 1 further, it means 2 to the side, if 2 further, 1 to the side.
+    const fromToZeroIndex = fromMove[0] - con[0];
+    const fromToOneIndex = fromMove[1] - con[1];
+    if (fromToZeroIndex === 1 || fromToZeroIndex === -1) {
+      if (fromToOneIndex === -2 || fromToOneIndex === 2) {
+        return movePieceInvoke(fromMove, con);
       }
-    } else if (fromMove[0] - con[0] === 2 || fromToZero === -2) {
-      if (fromToOne === 1 || fromToOne === -1) {
-        return movePiece(fromSquare, con);
+    } else if (fromToZeroIndex === 2 || fromToZeroIndex === -2) {
+      if (fromToOneIndex === 1 || fromToOneIndex === -1) {
+        return movePieceInvoke(fromMove, con);
       }
     }
   };
   const moveBishop = (fromMove, con) => {
-    const fromToZero = fromMove[0] - con[0];
-    let i = fromToZero;
-    if (fromMove[0] - con[0] === i || fromToZero === -i) {
-      if (fromMove[1] - con[1] === i || fromMove[1] - con[1] === -i) {
+    // bishop can only move at an angle on its same color.
+    const fromToZeroIndex = fromMove[0] - con[0];
+    const fromToOneIndex = fromMove[1] - con[1];
+    let i = fromToZeroIndex;
+    if (fromToZeroIndex === i || fromToZeroIndex === -i) {
+      if (fromToOneIndex === i || fromToOneIndex === -i) {
         return movePiece(fromSquare, con);
       }
     }
   };
   const moveQueen = (fromMove, con) => {
-    const fromToZero = fromMove[0] - con[0];
-    const fromToOne = fromMove[1] - con[1];
-    let i = fromToZero;
-    if (fromToZero === i || fromToZero === -i || fromToZero === 0) {
-      if (fromToOne === i || fromToOne === -i || fromToOne === 0) {
+    // can behave as any other piece apart from knight.
+    const fromToZeroIndex = fromMove[0] - con[0];
+    const fromToOneIndex = fromMove[1] - con[1];
+    let i = fromToZeroIndex;
+    if (
+      fromToZeroIndex === i ||
+      fromToZeroIndex === -i ||
+      fromToZeroIndex === 0
+    ) {
+      if (
+        fromToOneIndex === i ||
+        fromToOneIndex === -i ||
+        fromToOneIndex === 0
+      ) {
         return movePiece(fromSquare, con);
       }
     }
     if (fromMove[0] - con[0] === 0) {
-      if (fromToOne <= 7 || fromToOne >= -7) {
+      if (fromToOneIndex <= 7 || fromToOneIndex >= -7) {
         return movePiece(fromSquare, con);
       }
     }
     return console.log("nah");
   };
   const moveKing = (fromMove, con) => {
-    const fromToZero = fromMove[0] - con[0];
-    const fromToOne = fromMove[1] - con[1];
+    const fromToZeroIndex = fromMove[0] - con[0];
+    const fromToOneIndex = fromMove[1] - con[1];
 
-    if (fromToZero === 1 || fromToZero === 0 || fromToZero === -1) {
-      if (fromToOne === 1 || fromToOne === 0 || fromToOne === -1) {
+    if (
+      fromToZeroIndex === 1 ||
+      fromToZeroIndex === 0 ||
+      fromToZeroIndex === -1
+    ) {
+      if (
+        fromToOneIndex === 1 ||
+        fromToOneIndex === 0 ||
+        fromToOneIndex === -1
+      ) {
         return movePiece(fromSquare, con);
       }
     }
     return console.log("nah");
   };
+
+  const checkPath = (path) => {
+    //get an path array
+    for (let i = 1; i <= path.length; i++) {
+      let figure = path[i];
+      if (mapObj[figure]) {
+        // console.log("figured");
+        // console.log(mapObj[path[0]].type);
+        if (mapObj[path[0]].type == "knight") {
+          return true;
+        }
+      }
+      if (mapObj[figure]) return false;
+      if (i === path.length - 1) {
+        if (mapObj[figure]) {
+          if (mapObj[figure].player !== mapObj[figure].player) {
+            return false;
+          }
+        }
+      }
+      //if last cell is empty ?
+      // if the last cell is the same color as the current player
+      //if the last cell is the other color
+
+      //last cell.
+    }
+    return true;
+    // return boolean
+  };
+
   const movePiece = (fromSquare, toSquare) => {
+    // here we will move the actual piece from one sqaure to another.
     console.log("inside move", fromSquare, toSquare);
     // 1. mapObj[toSquare] = mapObj[fromSquare] to the obj
     // 2. delete the property whose key is "fromSquare" from mapObj
+    const path = getTheFigurePath(fromSquare, toSquare);
+    if (!checkPath(path)) return;
+
     mapObj[toSquare] = mapObj[fromSquare];
     delete mapObj[fromSquare];
+    setPlayer(!player);
+    console.log(player);
   };
   // useEffect(() => {
   //   console.log("inEffect", fromSquare, toSquare);
@@ -195,8 +324,9 @@ const Board = () => {
   // };
 
   const handleClick = (con) => {
+    console.log(player);
     if (count === 0) {
-      if (mapObj[con] === undefined) {
+      if (!mapObj[con]) {
         return;
       }
     }
@@ -207,10 +337,9 @@ const Board = () => {
     }
     //second click
     // fromSquare -> toSqaure
-    if (
-      mapObj[con] == undefined ||
-      mapObj[fromSquare].player !== mapObj[con].player
-    ) {
+    if (!mapObj[con] || mapObj[fromSquare].player !== mapObj[con].player) {
+      getTheFigurePath(fromSquare, con);
+
       if (mapObj[fromSquare].type === "pawn") {
         movePawn(fromSquare, con);
         setCount(0);
@@ -246,6 +375,7 @@ const Board = () => {
   };
 
   return (
+    // we will map 8 * 8 of arrays to build our board.
     <div>
       {Array(8)
         .fill(0)
@@ -262,13 +392,14 @@ const Board = () => {
                 .map((e, squareIndex) => {
                   const colorPic =
                     (squareIndex + rowIndex) % 2 === 0 ? "white" : "black";
-
+                  // we will caculate the spread of black & white color on the board and identify each square
                   const numRow = rowIndex.toString();
                   const numSquare = squareIndex.toString();
                   const con = numRow.concat(numSquare);
                   const piece = mapObj[con];
 
                   return (
+                    //props
                     <Square
                       color={colorPic}
                       piece={piece}
