@@ -18,283 +18,360 @@ import Square from "./Square";
 
 //   },
 // });
-
 const mapObj = {
   //database of the board
-  "00": { type: "rook", player: "black" },
-  "01": { type: "knight", player: "black" },
-  "02": { type: "bishop", player: "black" },
-  "03": { type: "king", player: "black" },
-  "04": { type: "queen", player: "black" },
-  "05": { type: "bishop", player: "black" },
-  "06": { type: "knight", player: "black" },
-  "07": { type: "rook", player: "black" },
-  "10": { type: "pawn", player: "black" },
-  "11": { type: "pawn", player: "black" },
-  "12": { type: "pawn", player: "black" },
-  "13": { type: "pawn", player: "black" },
-  "14": { type: "pawn", player: "black" },
-  "15": { type: "pawn", player: "black" },
-  "16": { type: "pawn", player: "black" },
-  "17": { type: "pawn", player: "black" },
-  "60": { type: "pawn", player: "white" },
-  "61": { type: "pawn", player: "white" },
-  "62": { type: "pawn", player: "white" },
-  "63": { type: "pawn", player: "white" },
-  "64": { type: "pawn", player: "white" },
-  "65": { type: "pawn", player: "white" },
-  "66": { type: "pawn", player: "white" },
-  "67": { type: "pawn", player: "white" },
-  "70": { type: "rook", player: "white" },
-  "71": { type: "knight", player: "white" },
-  "72": { type: "bishop", player: "white" },
-  "73": { type: "queen", player: "white" },
-  "74": { type: "king", player: "white" },
-  "75": { type: "bishop", player: "white" },
-  "76": { type: "knight", player: "white" },
-  "77": { type: "rook", player: "white" },
+  "00": { type: "rook", player: false },
+  "01": { type: "knight", player: false },
+  "02": { type: "bishop", player: false },
+  "03": { type: "king", player: false },
+  "04": { type: "queen", player: false },
+  "05": { type: "bishop", player: false },
+  "06": { type: "knight", player: false },
+  "07": { type: "rook", player: false },
+  "10": { type: "pawn", player: false },
+  "11": { type: "pawn", player: false },
+  "12": { type: "pawn", player: false },
+  "13": { type: "pawn", player: false },
+  "14": { type: "pawn", player: false },
+  "15": { type: "pawn", player: false },
+  "16": { type: "pawn", player: false },
+  "17": { type: "pawn", player: false },
+  "60": { type: "pawn", player: true },
+  "61": { type: "pawn", player: true },
+  "62": { type: "pawn", player: true },
+  "63": { type: "pawn", player: true },
+  "64": { type: "pawn", player: true },
+  "65": { type: "pawn", player: true },
+  "66": { type: "pawn", player: true },
+  "67": { type: "pawn", player: true },
+  "70": { type: "rook", player: true },
+  "71": { type: "knight", player: true },
+  "72": { type: "bishop", player: true },
+  "73": { type: "king", player: true },
+  "74": { type: "queen", player: true },
+  "75": { type: "bishop", player: true },
+  "76": { type: "knight", player: true },
+  "77": { type: "rook", player: true },
 };
-
-// movePiece("10", "30");
 
 const Board = () => {
   const [count, setCount] = useState(0);
   const [fromSquare, setFromSquare] = useState();
   const [player, setPlayer] = useState(true);
+  const [check, setCheck] = useState(false);
+  const [chosen, setChosen] = useState();
   // const [toSquare, setToSquare] = useState();
-  const movePieceInvoke = (moveFrom, moveTo) => {
+  // useEffect(() => {
+  //   if (check === true) {
+  //     console.log("check is true");
+  //     setCount(0);
+  //   }
+  // }, 1);
+  console.log(chosen);
+
+  let printCheckOutside;
+  let printPlayerOutside;
+  const printCheck = (check) => {
+    check === false
+      ? (printCheckOutside = "no check at this point")
+      : (printCheckOutside = "check, please protect your King");
+  };
+  const printPlayer = (player) => {
+    player === true
+      ? (printPlayerOutside = "white player's turn")
+      : (printPlayerOutside = "blue player's turn");
+  };
+  printCheck(check);
+  printPlayer(player);
+  const moveInvoke = (moveFrom, moveTo) => {
     // the actual movePiece
     movePiece(moveFrom, moveTo);
   };
-  const splitAndParseToNumber = (square) => {
-    const [row, col] = square.split("");
-    console.log("splitted");
-    return [parseInt(row), parseInt(col)];
+
+  check === false ? console.log("check false") : console.log("check truth");
+  // checking if theres a check in play
+  const findKing = (startingSquare) => {
+    // here we find the king's key (location)
+    const entries = Object.entries(mapObj);
+    // console.log(entries);
+    for (let i = 0; i <= entries.length - 1; i++) {
+      let kingIndex;
+      if (entries[i][1].type === "king") {
+        if (entries[i][1].player !== mapObj[startingSquare].player) {
+          kingIndex = entries[i][0];
+          console.log("insideFindKing:", kingIndex);
+          return kingIndex;
+        }
+      }
+    }
   };
 
-  const getTheFigurePath = (moveFrom, moveTo) => {
-    const path = [];
-    let passingSquare;
-    const [moveFromRow, moveFromCol] = splitAndParseToNumber(moveFrom);
-    const [moveToRow, moveToCol] = splitAndParseToNumber(moveTo);
-    let j = moveFromCol;
-    //fill the path with the squares we past
-    //check witch is bigger , the rows move from or rows move to . if moveTo rows? then we going down, else going up
-    //check the going up movements:TODO - SET IN A OTHER FUNCTION ?
-    if (moveFromRow > moveToRow) {
-      //going only up the board
-      if (moveFromCol === moveToCol) {
-        for (let i = moveFromRow; i >= moveToRow; i--) {
-          passingSquare = i.toString() + moveFromCol.toString();
-          path.push(passingSquare);
-        }
-      }
-      //going up and move left
-      else if (moveFromCol > moveToCol) {
-        for (let i = moveFromRow; i >= moveToRow; i--) {
-          passingSquare = i.toString() + j.toString();
-          path.push(passingSquare);
-          if (j >= moveToCol) j--;
-        }
-      }
-      //move up and turn right
-      else if (moveFromCol < moveToCol) {
-        for (let i = moveFromRow; i >= moveToRow; i--) {
-          passingSquare = i.toString() + j.toString();
-          path.push(passingSquare);
-          if (j <= moveToCol) j++;
-        }
-      }
-    }
-    // Check for the going down movements:
-    else {
-      //only goes down:
-      if (moveFromCol === moveToCol) {
-        for (let i = moveFromRow; i <= moveToRow; i++) {
-          passingSquare = i.toString() + moveToCol.toString();
-          path.push(passingSquare);
-        }
-        //goes down and right
-      } else if (moveFromCol < moveToCol) {
-        for (let i = moveFromRow; i <= moveToRow; i++) {
-          passingSquare = i.toString() + j.toString();
-          path.push(passingSquare);
-          if (j <= moveToCol) j++;
-        }
-        //goes down and left
-      } else {
-        for (let i = moveFromRow; i <= moveToRow; i++) {
-          passingSquare = i.toString() + j.toString();
-          if (j >= moveToCol) j--;
-        }
-      }
-    }
-    return path;
-  };
+  // useState chosen
+  // caculate which cells i chose and which will be on my path
+  // scan through the cells and paint the chosen
 
-  const movePawn = (fromMove, con) => {
-    console.log(mapObj[fromSquare].player);
-    if (mapObj[fromSquare].player === "black") {
-      // if the pawn is black or white he can go to certain direction and eat a certain way so it wont be
-      // able to move backwards or eat in a forbidden way.
-      if (fromMove[0] - con[0] === -1) {
-        if (fromMove[1] - con[1] === 0) {
-          if (!mapObj[con]) {
-            return movePiece(fromSquare, con);
-          }
-        } else if (fromMove[1] - con[1] === 1 || fromMove[1] - con[1] === -1) {
-          if (!mapObj[con]) {
-            return;
-          } else if (mapObj[fromSquare] !== mapObj[con]) {
-            return movePiece(fromSquare, con);
-          }
-        }
-      }
-    }
-    if (mapObj[fromSquare].player === "white") {
-      if (fromMove[0] - con[0] === 1) {
-        if (fromMove[1] - con[1] === 0) {
-          if (!mapObj[con]) {
-            return movePiece(fromSquare, con);
-          }
-        } else if (fromMove[1] - con[1] === 1 || fromMove[1] - con[1] === -1) {
-          if (!mapObj[con]) {
-            return;
-          } else if (mapObj[fromSquare] !== mapObj[con]) {
-            return movePiece(fromSquare, con);
-          }
-        }
-      }
-    }
-    return console.log("nah");
-  };
-  const moveRook = (fromMove, con) => {
-    // rook can only move straight up\down or straight left\right
-    const fromToZeroIndex = fromMove[0] - con[0];
-    const fromToOneIndex = fromMove[1] - con[1];
+  // const getTheFigurePath = (moveFrom, moveTo) => {
+  //   const path = [];
+  //   let passingSquare;
+  //   const [moveFromRow, moveFromCol] = splitAndParseToNumber(moveFrom);
+  //   const [moveToRow, moveToCol] = splitAndParseToNumber(moveTo);
+  //   let j = moveFromCol;
+  //   //fill the path with the squares we past
+  //   //check witch is bigger , the rows move from or rows move to . if moveTo rows? then we going down, else going up
+  //   //check the going up movements:TODO - SET IN A OTHER FUNCTION ?
+  //   if (moveFromRow > moveToRow) {
+  //     //going only up the board
+  //     if (moveFromCol === moveToCol) {
+  //       for (let i = moveFromRow; i >= moveToRow; i--) {
+  //         passingSquare = i.toString() + moveFromCol.toString();
+  //         path.push(passingSquare);
+  //       }
+  //     }
+  //     //going up and move left
+  //     else if (moveFromCol > moveToCol) {
+  //       for (let i = moveFromRow; i > moveToRow; i--) {
+  //         passingSquare = i.toString() + j.toString();
+  //         path.push(passingSquare);
+  //         if (j >= moveToCol) j--;
+  //       }
+  //       path.push(moveTo);
+  //     }
+  //     //move up and turn right
+  //     else if (moveFromCol < moveToCol) {
+  //       for (let i = moveFromRow; i >= moveToRow; i--) {
+  //         passingSquare = i.toString() + j.toString();
+  //         path.push(passingSquare);
+  //         if (j <= moveToCol) j++;
+  //       }
+  //       path.push(moveTo);
+  //     }
+  //   }
+  //   // Check for the going down movements:
+  //   else {
+  //     //only goes down:
+  //     if (moveFromCol === moveToCol) {
+  //       for (let i = moveFromRow; i <= moveToRow; i++) {
+  //         passingSquare = i.toString() + moveToCol.toString();
+  //         path.push(passingSquare);
+  //       }
+  //       //goes down and right
+  //     } else if (moveFromCol < moveToCol) {
+  //       for (let i = moveFromRow; i <= moveToRow; i++) {
+  //         passingSquare = i.toString() + j.toString();
+  //         path.push(passingSquare);
+  //         if (j <= moveToCol) j++;
+  //       }
+  //       //goes down and left
+  //     } else {
+  //       for (let i = moveFromRow; i <= moveToRow; i++) {
+  //         passingSquare = i.toString() + j.toString();
+  //         if (j >= moveToCol) j--;
+  //       }
+  //     }
+  //   }
+  //   return path;
+  // };
 
-    if (fromToZeroIndex <= 7 || fromToZeroIndex >= -7) {
-      if (fromToOneIndex === 0) {
-        return movePiece(fromSquare, con);
-      }
-    }
-    if (fromMove[0] - con[0] === 0) {
-      if (fromToOneIndex <= 7 || fromToOneIndex >= -7) {
-        return movePiece(fromSquare, con);
-      }
-    }
-  };
-  const moveKnight = (fromMove, con) => {
-    // knight logic. if it moves 1 further, it means 2 to the side, if 2 further, 1 to the side.
-    const fromToZeroIndex = fromMove[0] - con[0];
-    const fromToOneIndex = fromMove[1] - con[1];
-    if (fromToZeroIndex === 1 || fromToZeroIndex === -1) {
-      if (fromToOneIndex === -2 || fromToOneIndex === 2) {
-        return movePieceInvoke(fromMove, con);
-      }
-    } else if (fromToZeroIndex === 2 || fromToZeroIndex === -2) {
-      if (fromToOneIndex === 1 || fromToOneIndex === -1) {
-        return movePieceInvoke(fromMove, con);
-      }
-    }
-  };
-  const moveBishop = (fromMove, con) => {
-    // bishop can only move at an angle on its same color.
-    const fromToZeroIndex = fromMove[0] - con[0];
-    const fromToOneIndex = fromMove[1] - con[1];
-    let i = fromToZeroIndex;
-    if (fromToZeroIndex === i || fromToZeroIndex === -i) {
-      if (fromToOneIndex === i || fromToOneIndex === -i) {
-        return movePiece(fromSquare, con);
-      }
-    }
-  };
-  const moveQueen = (fromMove, con) => {
-    // can behave as any other piece apart from knight.
-    const fromToZeroIndex = fromMove[0] - con[0];
-    const fromToOneIndex = fromMove[1] - con[1];
-    let i = fromToZeroIndex;
-    if (
-      fromToZeroIndex === i ||
-      fromToZeroIndex === -i ||
-      fromToZeroIndex === 0
-    ) {
-      if (
-        fromToOneIndex === i ||
-        fromToOneIndex === -i ||
-        fromToOneIndex === 0
-      ) {
-        return movePiece(fromSquare, con);
-      }
-    }
-    if (fromMove[0] - con[0] === 0) {
-      if (fromToOneIndex <= 7 || fromToOneIndex >= -7) {
-        return movePiece(fromSquare, con);
-      }
-    }
-    return console.log("nah");
-  };
-  const moveKing = (fromMove, con) => {
-    const fromToZeroIndex = fromMove[0] - con[0];
-    const fromToOneIndex = fromMove[1] - con[1];
+  // const movePawn = (fromMove, toMove) => {
+  //   // console.log(mapObj[fromSquare].player);
+  //   if (mapObj[fromSquare].player === false) {
+  //     // if the pawn is black or white he can go to certain direction and eat a certain way
+  //     //only the pawns first step may be two steps
+  //     if (fromMove[0] - toMove[0] === -2) {
+  //       //only if its the pawn first move it can go two steps
+  //       if (fromMove[0] === "1") {
+  //         return moveInvoke(fromSquare, toMove);
+  //       }
+  //     }
+  //     if (fromMove[0] - toMove[0] === -1) {
+  //       //normally a pawn can only go straight
+  //       if (fromMove[1] - toMove[1] === 0) {
+  //         if (!mapObj[toMove]) {
+  //           return moveInvoke(fromSquare, toMove);
+  //         }
+  //       } else if (
+  //         fromMove[1] - toMove[1] === 1 ||
+  //         fromMove[1] - toMove[1] === -1
+  //       ) {
+  //         // in case of eating
+  //         if (!mapObj[toMove]) {
+  //           return;
+  //         } else if (mapObj[fromSquare] !== mapObj[toMove]) {
+  //           return moveInvoke(fromSquare, toMove);
+  //         }
+  //       }
+  //     }
+  //   }
+  //   if (mapObj[fromSquare].player === true) {
+  //     if (fromMove[0] - toMove[0] === 2) {
+  //       //only if its the pawn first move it can go two steps
+  //       if (fromMove[0] === "6") {
+  //         return moveInvoke(fromSquare, toMove);
+  //       }
+  //     }
+  //     //case of white pawn go straight
+  //     if (fromMove[0] - toMove[0] === 1) {
+  //       if (fromMove[1] - toMove[1] === 0) {
+  //         if (!mapObj[toMove]) {
+  //           return moveInvoke(fromSquare, toMove);
+  //         }
+  //       } else if (
+  //         fromMove[1] - toMove[1] === 1 ||
+  //         fromMove[1] - toMove[1] === -1
+  //       ) {
+  //         //in case of eating
+  //         if (!mapObj[toMove]) {
+  //           return;
+  //         } else if (mapObj[fromSquare] !== mapObj[toMove]) {
+  //           return moveInvoke(fromSquare, toMove);
+  //         }
+  //       }
+  //     }
+  //   }
+  //   return console.log("nah");
+  // };
+  // const moveRook = (fromMove, con) => {
+  //   // rook can only move straight up\down or straight left\right
+  //   const fromToZeroIndex = fromMove[0] - con[0];
+  //   const fromToOneIndex = fromMove[1] - con[1];
 
-    if (
-      fromToZeroIndex === 1 ||
-      fromToZeroIndex === 0 ||
-      fromToZeroIndex === -1
-    ) {
-      if (
-        fromToOneIndex === 1 ||
-        fromToOneIndex === 0 ||
-        fromToOneIndex === -1
-      ) {
-        return movePiece(fromSquare, con);
-      }
-    }
-    return console.log("nah");
-  };
+  //   if (fromToZeroIndex <= 7 || fromToZeroIndex >= -7) {
+  //     if (fromToOneIndex === 0) {
+  //       return moveInvoke(fromSquare, con);
+  //     }
+  //   }
+  //   if (fromMove[0] - con[0] === 0) {
+  //     if (fromToOneIndex <= 7 || fromToOneIndex >= -7) {
+  //       return moveInvoke(fromSquare, con);
+  //     }
+  //   }
+  // };
+  // const moveKnight = (fromMove, con) => {
+  //   // knight logic. if it moves 1 further, it means 2 to the side, if 2 further, 1 to the side.
 
-  const checkPath = (path) => {
-    //get an path array
-    for (let i = 1; i <= path.length; i++) {
-      let figure = path[i];
-      if (mapObj[figure]) {
-        // console.log("figured");
-        // console.log(mapObj[path[0]].type);
-        if (mapObj[path[0]].type == "knight") {
-          return true;
-        }
-      }
-      if (mapObj[figure]) return false;
-      if (i === path.length - 1) {
-        if (mapObj[figure]) {
-          if (mapObj[figure].player !== mapObj[figure].player) {
-            return false;
-          }
-        }
-      }
-      //if last cell is empty ?
-      // if the last cell is the same color as the current player
-      //if the last cell is the other color
+  //   const fromToZeroIndex = fromMove[0] - con[0];
+  //   const fromToOneIndex = fromMove[1] - con[1];
+  //   if (fromToZeroIndex === 1 || fromToZeroIndex === -1) {
+  //     if (fromToOneIndex === -2 || fromToOneIndex === 2) {
+  //       return moveInvoke(fromMove, con);
+  //     }
+  //   } else if (fromToZeroIndex === 2 || fromToZeroIndex === -2) {
+  //     if (fromToOneIndex === 1 || fromToOneIndex === -1) {
+  //       return moveInvoke(fromMove, con);
+  //     }
+  //   }
+  // };
 
-      //last cell.
-    }
-    return true;
-    // return boolean
-  };
+  // const moveBishop = (fromMove, con) => {
+  //   // bishop can only move at an angle on its same color.
+  //   const fromToZeroIndex = fromMove[0] - con[0];
+  //   const fromToOneIndex = fromMove[1] - con[1];
+  //   let i = fromToZeroIndex;
+  //   if (fromToZeroIndex === i || fromToZeroIndex === -i) {
+  //     if (fromToOneIndex === i || fromToOneIndex === -i) {
+  //       return moveInvoke(fromSquare, con);
+  //     }
+  //   }
+  // };
+  // const moveQueen = (fromMove, con) => {
+  //   // can behave as any other piece apart from knight.
+  //   const fromToZeroIndex = fromMove[0] - con[0];
+  //   const fromToOneIndex = fromMove[1] - con[1];
+  //   let i = fromToZeroIndex;
+  //   if (
+  //     fromToZeroIndex === i ||
+  //     fromToZeroIndex === -i ||
+  //     fromToZeroIndex === 0
+  //   ) {
+  //     if (
+  //       fromToOneIndex === i ||
+  //       fromToOneIndex === -i ||
+  //       fromToOneIndex === 0
+  //     ) {
+  //       return moveInvoke(fromSquare, con);
+  //     }
+  //   }
+  //   if (fromMove[0] - con[0] === 0) {
+  //     if (fromToOneIndex <= 7 || fromToOneIndex >= -7) {
+  //       return moveInvoke(fromSquare, con);
+  //     }
+  //   }
+  //   return console.log("nah");
+  // };
+  // const moveKing = (fromMove, con) => {
+  //   const fromToZeroIndex = fromMove[0] - con[0];
+  //   const fromToOneIndex = fromMove[1] - con[1];
+
+  //   if (
+  //     fromToZeroIndex === 1 ||
+  //     fromToZeroIndex === 0 ||
+  //     fromToZeroIndex === -1
+  //   ) {
+  //     if (
+  //       fromToOneIndex === 1 ||
+  //       fromToOneIndex === 0 ||
+  //       fromToOneIndex === -1
+  //     ) {
+  //       return moveInvoke(fromSquare, con);
+  //     }
+  //   }
+  //   return console.log("nah");
+  // };
+
+  // const checkPath = (path) => {
+  //   //get an path array
+  //   for (let i = 1; i <= path.length; i++) {
+  //     let figure = path[i];
+  //     if (mapObj[figure]) {
+  //       // console.log("figured");
+  //       // console.log(mapObj[path[0]].type);
+  //       if (mapObj[path[0]].type == "knight") {
+  //         return true;
+  //       }
+  //     }
+  //     if (mapObj[figure]) return false;
+  //     if (i === path.length - 1) {
+  //       if (mapObj[figure]) {
+  //         if (mapObj[figure].player !== mapObj[figure].player) {
+  //           return false;
+  //         }
+  //       }
+  //     }
+  //     //if last cell is empty ?
+  //     // if the last cell is the same color as the current player
+  //     //if the last cell is the other color
+
+  //     //last cell.
+  //   }
+  //   return true;
+  //   // return printCheckOutsidelean
+  // };
 
   const movePiece = (fromSquare, toSquare) => {
-    // here we will move the actual piece from one sqaure to another.
-    console.log("inside move", fromSquare, toSquare);
-    // 1. mapObj[toSquare] = mapObj[fromSquare] to the obj
-    // 2. delete the property whose key is "fromSquare" from mapObj
-    const path = getTheFigurePath(fromSquare, toSquare);
-    if (!checkPath(path)) return;
-
-    mapObj[toSquare] = mapObj[fromSquare];
-    delete mapObj[fromSquare];
-    setPlayer(!player);
-    console.log(player);
+    const movingContent = () => {
+      // here we will move the actual piece from one sqaure to another.
+      console.log("inside move", fromSquare, toSquare);
+      // 1. mapObj[toSquare] = mapObj[fromSquare] to the obj
+      // 2. delete the property whose key is "fromSquare" from mapObj
+      // const path = getTheFigurePath(fromSquare, toSquare);
+      if (check === true) {
+        return;
+      }
+      // if (!checkPath(path)) return;
+      mapObj[toSquare] = mapObj[fromSquare];
+      delete mapObj[fromSquare];
+      setPlayer(!player);
+      console.log("player is: ", player);
+    };
+    if (player === true) {
+      if (mapObj[fromSquare].player === true) {
+        movingContent();
+      }
+    } else if (player === false) {
+      if (mapObj[fromSquare].player === false) {
+        movingContent();
+      }
+    }
   };
   // useEffect(() => {
   //   console.log("inEffect", fromSquare, toSquare);
@@ -304,75 +381,325 @@ const Board = () => {
   //   }
   // }, [fromSquare, toSquare]);
 
-  // console.log("fromSquare:", fromSquare);
-  // console.log("ToSquare:", toSquare);
-  // const borderHover = "black solid 1px";
-  // console.log(borderHover);
-  // let isHovered = false;
+  const parseToNumber = (square) => {
+    const [row, col] = square.split("");
+    console.log("splitted");
+    return [parseInt(row), parseInt(col)];
+  };
 
-  // const handleMouseOver = (colorPic, borderHover) => {
-  //   if (count === 0) {
-  //     // borderHover = "red solid 1px";
-  //     // console.log(borderHover);
-  //     // console.log("color:", colorPic);
-  //     isHovered = true;
-  //     // colorPic = "black";
-  //     // console.log("color2:", colorPic);P
+  const addPossibleCellToPath = (
+    nextPossibleRow,
+    nextPossibleCol,
+    nextPossibleMoves
+  ) => {
+    const nextPossibleCell =
+      nextPossibleRow.toString() + nextPossibleCol.toString();
+    // remove the options of jumping above current player figures
+    // if (
+    //   mapObj[nextPossibleCell] &&
+    //   mapObj[nextPossibleCell].player === player
+    // ) {
+    //   return false;
+    // }
+    // add the last opponent cell, so i can remove him on play, and return to avoid the path to continue
 
-  //     console.log(isHovered);
-  //   }
-  // };
+    // if (
+    //   mapObj[nextPossibleCell] &&
+    //   mapObj[nextPossibleCell].player !== player
+    // ) {
+    //   nextPossibleMoves[nextPossibleCell] = mapObj[nextPossibleCell];
+    //   return false;
+    // }
+    if (!mapObj[nextPossibleCell]) {
+      return (nextPossibleMoves[nextPossibleCell] = "empty");
+    } else
+      return (nextPossibleMoves[nextPossibleCell] = mapObj[nextPossibleCell]);
+  };
 
+  const findPath = (fromSquare) => {
+    let nextPossibleMoves = {};
+    if (!fromSquare) {
+      return {};
+    } else if (!mapObj[fromSquare]) {
+      return {};
+    }
+    const [moveFromRow, moveFromCol] = parseToNumber(fromSquare);
+
+    // const rookFunctionInfo = (i) => {
+    //   // console.log(i);
+    //   // console.log(moveFromRow);
+    //   // console.log(moveFromCol);
+    //   // will recieve square location and export the cells it can go to
+    //   //
+    //   addPossibleCellToPath(moveFromRow - i, moveFromCol, nextPossibleMoves);
+    //   addPossibleCellToPath(moveFromRow + i, moveFromCol, nextPossibleMoves);
+    //   addPossibleCellToPath(moveFromRow, moveFromCol + i, nextPossibleMoves);
+    //   addPossibleCellToPath(moveFromRow, moveFromCol - i, nextPossibleMoves);
+    // };
+    const bishopFunctionInfo = (i) => {
+      addPossibleCellToPath(
+        moveFromRow + i,
+        moveFromCol + i,
+        nextPossibleMoves
+      );
+      addPossibleCellToPath(
+        moveFromRow - i,
+        moveFromCol - i,
+        nextPossibleMoves
+      );
+      addPossibleCellToPath(
+        moveFromRow + i,
+        moveFromCol - i,
+        nextPossibleMoves
+      );
+      addPossibleCellToPath(
+        moveFromRow - i,
+        moveFromCol + i,
+        nextPossibleMoves
+      );
+    };
+    const pawnFunctionInfo = () => {
+      addPossibleCellToPath(moveFromRow - 1, moveFromCol, nextPossibleMoves);
+      addPossibleCellToPath(moveFromRow + 1, moveFromCol, nextPossibleMoves);
+    };
+    if (mapObj[fromSquare].type === "pawn") {
+      const getNextPawnMove = () => {
+        if (mapObj[fromSquare].player === false) {
+          if (fromSquare[0] === "1") {
+            addPossibleCellToPath(
+              moveFromRow + 2,
+              moveFromCol,
+              nextPossibleMoves
+            );
+            addPossibleCellToPath(
+              moveFromRow + 1,
+              moveFromCol,
+              nextPossibleMoves
+            );
+            return nextPossibleMoves;
+          }
+        }
+        if (mapObj[fromSquare].player === true) {
+          if (fromSquare[0] === "6") {
+            addPossibleCellToPath(
+              moveFromRow - 2,
+              moveFromCol,
+              nextPossibleMoves
+            );
+            addPossibleCellToPath(
+              moveFromRow - 1,
+              moveFromCol,
+              nextPossibleMoves
+            );
+            return nextPossibleMoves;
+          }
+        }
+        pawnFunctionInfo();
+        return nextPossibleMoves;
+      };
+      const result = getNextPawnMove(fromSquare);
+
+      console.log("kkk", result);
+      return result;
+    }
+    // console.log(fromSquare, mapObj);
+    // if (mapObj[fromSquare].type === "knight") {
+    //   const getNextKnightMove = () => {
+    //     //[[moveFromRow,moveFromCol],[moveFromCol,moveFromRow]]].
+    //     // [
+    //     //   [1, 2],
+    //     //   [-1, 2],
+    //     //   [1, -2],
+    //     //   [-1, -2],
+    //     // ].reduce((acc, [f1, f2]) => {
+    //     //   return [
+    //     //     ...acc,
+    //     //     [moveFromRow + f1, moveFromCol + f2],
+    //     //     [moveFromCol + f1, moveFromRow + f2],
+    //     //   ];
+    //     // }, []);
+
+    //     addPossibleCellToPath(
+    //       moveFromRow - 2,
+    //       moveFromCol + 1,
+    //       nextPossibleMoves
+    //     );
+    //     addPossibleCellToPath(
+    //       moveFromRow - 2,
+    //       moveFromCol - 1,
+    //       nextPossibleMoves
+    //     );
+    //     addPossibleCellToPath(
+    //       moveFromRow + 2,
+    //       moveFromCol + 1,
+    //       nextPossibleMoves
+    //     );
+    //     addPossibleCellToPath(
+    //       moveFromRow + 2,
+    //       moveFromCol - 1,
+    //       nextPossibleMoves
+    //     );
+
+    //     addPossibleCellToPath(
+    //       moveFromRow - 1,
+    //       moveFromCol + 2,
+    //       nextPossibleMoves
+    //     );
+    //     addPossibleCellToPath(
+    //       moveFromRow - 1,
+    //       moveFromCol - 2,
+    //       nextPossibleMoves
+    //     );
+    //     addPossibleCellToPath(
+    //       moveFromRow + 1,
+    //       moveFromCol + 2,
+    //       nextPossibleMoves
+    //     );
+    //     addPossibleCellToPath(
+    //       moveFromRow + 1,
+    //       moveFromCol - 2,
+    //       nextPossibleMoves
+    //     );
+    //     return nextPossibleMoves;
+    //   };
+    //   const result = getNextKnightMove(fromSquare);
+
+    //   console.log("kkk", result);
+    //   return result;
+    // }
+    if (mapObj[fromSquare].type === "rook") {
+      const getNextRookMove = () => {
+        let rookPath = {};
+        let squareToCheck = "44";
+        for (let i = fromSquare[0] - 1; i >= 0; i--) {
+          // go upwards and check if the square is not empty or not the end of the board;
+          squareToCheck = i.toString() + moveFromCol;
+          console.log(squareToCheck);
+          let squareInsideBoard =
+            squareToCheck >= 0 || squareToCheck <= 77 ? true : false;
+          let isSquareEmpty = !mapObj[squareToCheck] ? true : false;
+          console.log(squareInsideBoard);
+          console.log(isSquareEmpty);
+          if (squareInsideBoard && isSquareEmpty) {
+            // if the next square is empty and inside boards then push the empty into rookPath
+            console.log("inside if");
+            console.log(rookPath);
+            rookPath[squareToCheck] = "empty";
+          } else return rookPath;
+        }
+        return rookPath;
+      };
+      const result = getNextRookMove(fromSquare);
+      console.log("kkk", result);
+      return result;
+    }
+    // if (mapObj[fromSquare].type === "bishop") {
+    //   const getNextBishopMove = () => {
+    //     for (let i = fromSquare[0]; i <= 7; i++) {
+    //       bishopFunctionInfo(i);
+    //     }
+    //     for (let i = fromSquare[0]; i >= 0; i--) {
+    //       bishopFunctionInfo(i);
+    //     }
+    //     return nextPossibleMoves;
+    //   };
+    //   const result = getNextBishopMove(fromSquare);
+
+    //   console.log("kkk", result);
+    //   return result;
+    // }
+    // if (mapObj[fromSquare].type === "queen") {
+    //   const getNextQueenMove = () => {
+    //     for (let i = 1; i <= 7; i++) {
+    //       bishopFunctionInfo(i);
+    //       rookFunctionInfo(i);
+    //     }
+    //     return nextPossibleMoves;
+    //   };
+    //   const result = getNextQueenMove(fromSquare);
+
+    //   console.log("kkk", result);
+    //   return result;
+    // }
+    // if (mapObj[fromSquare].type === "king") {
+    //   const getNextKingMove = () => {
+    //     pawnFunctionInfo();
+    //     addPossibleCellToPath(
+    //       moveFromRow + 1,
+    //       moveFromCol - 1,
+    //       nextPossibleMoves
+    //     );
+    //     addPossibleCellToPath(
+    //       moveFromRow + 1,
+    //       moveFromCol + 1,
+    //       nextPossibleMoves
+    //     );
+    //     addPossibleCellToPath(moveFromRow, moveFromCol - 1, nextPossibleMoves);
+    //     addPossibleCellToPath(moveFromRow, moveFromCol + 1, nextPossibleMoves);
+    //     addPossibleCellToPath(
+    //       moveFromRow - 1,
+    //       moveFromCol - 1,
+    //       nextPossibleMoves
+    //     );
+    //     addPossibleCellToPath(
+    //       moveFromRow - 1,
+    //       moveFromCol + 1,
+    //       nextPossibleMoves
+    //     );
+    //     return nextPossibleMoves;
+    //   };
+    //   const result = getNextKingMove(fromSquare);
+
+    //   console.log("kkk", result);
+    //   return result;
+    // }
+  };
   const handleClick = (con) => {
     console.log(player);
     if (count === 0) {
       if (!mapObj[con]) {
+        //first spuare to click cant be empty
         return;
       }
     }
     if (count === 0) {
       setFromSquare(con);
       setCount(count + 1);
+      console.log("this con mada", con);
+      setChosen(con);
+      console.log("chosen:", chosen);
       return;
     }
     //second click
     // fromSquare -> toSqaure
     if (!mapObj[con] || mapObj[fromSquare].player !== mapObj[con].player) {
-      getTheFigurePath(fromSquare, con);
-
-      if (mapObj[fromSquare].type === "pawn") {
-        movePawn(fromSquare, con);
-        setCount(0);
-        return;
-      }
-      if (mapObj[fromSquare].type === "rook") {
-        moveRook(fromSquare, con);
-        setCount(0);
-        return;
-      }
-      if (mapObj[fromSquare].type === "knight") {
-        moveKnight(fromSquare, con);
-        setCount(0);
-        return;
-      }
-      if (mapObj[fromSquare].type === "bishop") {
-        moveBishop(fromSquare, con);
-        setCount(0);
-        return;
-      }
-      if (mapObj[fromSquare].type === "king") {
-        moveKing(fromSquare, con);
-        setCount(0);
-        return;
-      }
-      if (mapObj[fromSquare].type === "queen") {
-        moveQueen(fromSquare, con);
-        setCount(0);
-        return;
-      }
+      const moveFigureAlready = (fromSquare, con) => {
+        if (findPath(fromSquare)[con]) {
+          console.log(findPath(fromSquare)[con]);
+          //check if the second click is in path
+          const returnPathArr = Object.values(findPath(fromSquare));
+          for (let i = 0; i <= returnPathArr.length; i++) {
+            console.log("im fromsquare:", fromSquare);
+            console.log("im the fucking return array:", returnPathArr);
+            //scan through path and not let passing through NON-EMPTY
+            if (returnPathArr[i] === "empty") {
+              console.log("i survived");
+              moveInvoke(fromSquare, con);
+              setCount(0);
+              return;
+            }
+            return;
+          }
+        }
+      };
+      moveFigureAlready(fromSquare, con);
     }
     setCount(0);
   };
+
+  console.log(chosen);
+  const path = findPath(chosen);
+  console.log(path);
 
   return (
     // we will map 8 * 8 of arrays to build our board.
@@ -391,19 +718,22 @@ const Board = () => {
                 .fill(0)
                 .map((e, squareIndex) => {
                   const colorPic =
-                    (squareIndex + rowIndex) % 2 === 0 ? "white" : "black";
+                    (squareIndex + rowIndex) % 2 === 0 ? true : false;
                   // we will caculate the spread of black & white color on the board and identify each square
                   const numRow = rowIndex.toString();
                   const numSquare = squareIndex.toString();
                   const con = numRow.concat(numSquare);
                   const piece = mapObj[con];
-
+                  const isHighlighted = path[con] ? true : false;
+                  console.log(isHighlighted);
                   return (
                     //props
                     <Square
+                      isHighlighted={isHighlighted}
                       color={colorPic}
                       piece={piece}
                       onClick={() => handleClick(con)}
+
                       // onMouseOver={() => handleMouseOver(colorPic)}
                     />
                   );
@@ -411,102 +741,16 @@ const Board = () => {
             </div>
           );
         })}
-      <h1>clock</h1>
+      <h1>{printCheckOutside}</h1>
+      <h1>{printPlayerOutside}</h1>
     </div>
   );
-
-  /* return (
-    <div>
-      <div style={{ display: "flex", flexDirection: "row" }}>
-        <Square color="white" piece={{ type: "rook", player: "white" }} />
-        <Square color="black" piece={{ type: "knight", player: "white" }} />
-        <Square color="white" piece={{ type: "bishop", player: "white" }} />
-        <Square color="black" piece={{ type: "king", player: "white" }} />
-        <Square color="white" piece={{ type: "queen", player: "white" }} />
-        <Square color="black" piece={{ type: "bishop", player: "white" }} />
-        <Square color="white" piece={{ type: "knight", player: "white" }} />
-        <Square color="black" piece={{ type: "rook", player: "white" }} />
-      </div>
-      <div style={{ display: "flex", flexDirection: "row" }}>
-        <Square color="black" piece={{ type: "pawn", player: "white" }} />
-        <Square color="white" piece={{ type: "pawn", player: "white" }} />
-        <Square color="black" piece={{ type: "pawn", player: "white" }} />
-        <Square color="white" piece={{ type: "pawn", player: "white" }} />
-        <Square color="black" piece={{ type: "pawn", player: "white" }} />
-        <Square color="white" piece={{ type: "pawn", player: "white" }} />
-        <Square color="black" piece={{ type: "pawn", player: "white" }} />
-        <Square color="white" piece={{ type: "pawn", player: "white" }} />
-      </div>
-      <div style={{ display: "flex", flexDirection: "row" }}>
-        <Square color="black" piece={{ type: null, player: "black" }} />
-        <Square color="white" piece={{ type: null, player: "black" }} />
-        <Square color="black" piece={{ type: null, player: "black" }} />
-        <Square color="white" piece={{ type: null, player: "black" }} />
-        <Square color="black" piece={{ type: null, player: "black" }} />
-        <Square color="white" piece={{ type: null, player: "black" }} />
-        <Square color="black" piece={{ type: null, player: "black" }} />
-        <Square color="white" piece={{ type: null, player: "black" }} />
-      </div>
-      <div style={{ display: "flex", flexDirection: "row" }}>
-        <Square color="black" piece={{ type: null, player: "black" }} />
-        <Square color="white" piece={{ type: null, player: "black" }} />
-        <Square color="black" piece={{ type: null, player: "black" }} />
-        <Square color="white" piece={{ type: null, player: "black" }} />
-        <Square color="black" piece={{ type: null, player: "black" }} />
-        <Square color="white" piece={{ type: null, player: "black" }} />
-        <Square color="black" piece={{ type: null, player: "black" }} />
-        <Square color="white" piece={{ type: null, player: "black" }} />
-      </div>
-      <div style={{ display: "flex", flexDirection: "row" }}>
-        <Square color="black" piece={{ type: null, player: "black" }} />
-        <Square color="white" piece={{ type: null, player: "black" }} />
-        <Square color="black" piece={{ type: null, player: "black" }} />
-        <Square color="white" piece={{ type: null, player: "black" }} />
-        <Square color="black" piece={{ type: null, player: "black" }} />
-        <Square color="white" piece={{ type: null, player: "black" }} />
-        <Square color="black" piece={{ type: null, player: "black" }} />
-        <Square color="white" piece={{ type: null, player: "black" }} />
-      </div>
-      <div style={{ display: "flex", flexDirection: "row" }}>
-        <Square color="black" piece={{ type: null, player: "black" }} />
-        <Square color="white" piece={{ type: null, player: "black" }} />
-        <Square color="black" piece={{ type: null, player: "black" }} />
-        <Square color="white" piece={{ type: null, player: "black" }} />
-        <Square color="black" piece={{ type: null, player: "black" }} />
-        <Square color="white" piece={{ type: null, player: "black" }} />
-        <Square color="black" piece={{ type: null, player: "black" }} />
-        <Square color="white" piece={{ type: null, player: "black" }} />
-      </div>
-      <div style={{ display: "flex", flexDirection: "row" }}>
-        <Square color="black" piece={{ type: "pawn", player: "black" }} />
-        <Square color="white" piece={{ type: "pawn", player: "black" }} />
-        <Square color="black" piece={{ type: "pawn", player: "black" }} />
-        <Square color="white" piece={{ type: "pawn", player: "black" }} />
-        <Square color="black" piece={{ type: "pawn", player: "black" }} />
-        <Square color="white" piece={{ type: "pawn", player: "black" }} />
-        <Square color="black" piece={{ type: "pawn", player: "black" }} />
-        <Square color="white" piece={{ type: "pawn", player: "black" }} />
-      </div>
-
-      <div style={{ display: "flex", flexDirection: "row" }}>
-        <Square color="black" piece={{ type: "rook", player: "black" }} />
-        <Square color="white" piece={{ type: "knight", player: "black" }} />
-        <Square color="black" piece={{ type: "bishop", player: "black" }} />
-        <Square color="white" piece={{ type: "queen", player: "black" }} />
-        <Square color="black" piece={{ type: "king", player: "black" }} />
-        <Square color="white" piece={{ type: "bishop", player: "black" }} />
-        <Square color="black" piece={{ type: "knight", player: "black" }} />
-        <Square color="white" piece={{ type: "rook", player: "black" }} />
-      </div>
-    </div>
-   );*/
 };
 
 function App() {
   return (
     <div className="App">
       <Board />
-      {/* <Square color="white" piece={{type:"rook", player:"black"}} /> */}
     </div>
   );
 }

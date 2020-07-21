@@ -61,7 +61,6 @@ const mapObj = {
   "77": { type: "rook", player: "white" },
 };
 
-// movePiece("10", "30");
 const Square = ({ color, piece = {}, onClick, onMouseOver }) => {
   let pieceChar;
   switch (piece.type) {
@@ -117,28 +116,6 @@ const Board = () => {
     mapObj[toSquare] = mapObj[fromSquare];
     delete mapObj[fromSquare];
   };
-  // useEffect(() => {
-  //   console.log("inEffect", fromSquare, toSquare);
-  //   if (fromSquare && toSquare) {
-  //     movePiece(fromSquare, toSquare);
-  //     // setToSquare();
-  //   }
-  // }, [fromSquare, toSquare]);
-
-  // console.log("fromSquare:", fromSquare);
-  // console.log("ToSquare:", toSquare);
-  // let isHovered = false;
-
-  // const handleMouseOver = (colorPic) => {
-  //   if (count === 0) {
-  //     console.log("color:", colorPic);
-  //     isHovered = true;
-  //     colorPic = "black";
-  //     console.log("color2:", colorPic);
-
-  //     console.log(isHovered);
-  //   }
-  // };
 
   const handleClick = (con) => {
     if (count === 0) {

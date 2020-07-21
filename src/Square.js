@@ -3,23 +3,26 @@ import styled from "styled-components";
 import App from "./App";
 
 const SquareDiv = styled.div`
-  border: 1.2px solid black;
+  border: ${(props) =>
+    props.isHighlighted === false ? "1.2px solid black" : "1.2px solid red"};
   height: 70px;
   width: 70px;
   font-size: 45px;
   display: flex;
   align-items: center;
   justify-content: center;
-  color: ${(props) => (props.piece.player === "white" ? "black" : "blue")};
-  background-color: ${(props) => (props.color === "black" ? "white" : "gray")};
+  color: ${(props) => (props.piece.player === true ? "black" : "blue")};
+  background-color: ${(props) => (props.color === false ? "white" : "gray")};
+
   &:hover {
     border: 1.2px solid red;
     background: green;
     opacity: 0.8;
   }
 `;
-
-const Square = ({ color, piece = {}, onClick }) => {
+// console.log("path path its a come", path);
+const Square = ({ color, piece = {}, onClick, isHighlighted }) => {
+  // console.log("77", path);
   let pieceChar;
   switch (piece.type) {
     case "rook":
@@ -45,11 +48,13 @@ const Square = ({ color, piece = {}, onClick }) => {
   //   console.log(piece.choose);
   //   console.log(colorPic);
   //   console.log(color);
+  // console.log(path);
   return (
     <SquareDiv
       color={color}
       piece={piece}
       onClick={onClick}
+      isHighlighted={isHighlighted}
       // onMouseOver={onMouseOver}
       style={
         {
