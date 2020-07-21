@@ -424,7 +424,25 @@ const Board = () => {
       return {};
     }
     const [moveFromRow, moveFromCol] = parseToNumber(fromSquare);
-
+    const allPossibleRookMoves = (rookDirection, rookPath) => {
+      let squareToCheck = "44";
+      for (let i = rookDirection; i >= 0; i--) {
+        // go upwards and check if the square is not empty or not the end of the board;
+        squareToCheck = i.toString() + moveFromCol;
+        console.log(squareToCheck);
+        let squareInsideBoard =
+          squareToCheck >= 0 || squareToCheck <= 77 ? true : false;
+        let isSquareEmpty = !mapObj[squareToCheck] ? true : false;
+        console.log(squareInsideBoard);
+        console.log(isSquareEmpty);
+        if (squareInsideBoard && isSquareEmpty) {
+          // if the next square is empty and inside boards then push the empty into rookPath
+          console.log("inside if");
+          console.log(rookPath);
+          rookPath[squareToCheck] = "empty";
+        } else return rookPath;
+      }
+    };
     // const rookFunctionInfo = (i) => {
     //   // console.log(i);
     //   // console.log(moveFromRow);
@@ -570,23 +588,14 @@ const Board = () => {
     if (mapObj[fromSquare].type === "rook") {
       const getNextRookMove = () => {
         let rookPath = {};
-        let squareToCheck = "44";
-        for (let i = fromSquare[0] - 1; i >= 0; i--) {
-          // go upwards and check if the square is not empty or not the end of the board;
-          squareToCheck = i.toString() + moveFromCol;
-          console.log(squareToCheck);
-          let squareInsideBoard =
-            squareToCheck >= 0 || squareToCheck <= 77 ? true : false;
-          let isSquareEmpty = !mapObj[squareToCheck] ? true : false;
-          console.log(squareInsideBoard);
-          console.log(isSquareEmpty);
-          if (squareInsideBoard && isSquareEmpty) {
-            // if the next square is empty and inside boards then push the empty into rookPath
-            console.log("inside if");
-            console.log(rookPath);
-            rookPath[squareToCheck] = "empty";
-          } else return rookPath;
-        }
+        let goingUp = fromSquare[0] - 1;
+        let goingDown = fromSquare[0] + 1;
+        let goingLeft = fromSquare[1] - 1;
+        let goingRight = fromSquare[1] + 1;
+        allPossibleRookMoves(goingUp, rookPath);
+        // allPossibleRookMoves(goingDown, rookPath);
+        // allPossibleRookMoves(goingLeft, rookPath);
+        // allPossibleRookMoves(goingRight, rookPath);
         return rookPath;
       };
       const result = getNextRookMove(fromSquare);
