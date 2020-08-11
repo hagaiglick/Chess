@@ -395,26 +395,11 @@ const Board = () => {
   ) => {
     const nextPossibleCell =
       nextPossibleRow.toString() + nextPossibleCol.toString();
-    // remove the options of jumping above current player figures
-    // if (
-    //   mapObj[nextPossibleCell] &&
-    //   mapObj[nextPossibleCell].player === player
-    // ) {
-    //   return false;
-    // }
-    // add the last opponent cell, so i can remove him on play, and return to avoid the path to continue
-
-    // if (
-    //   mapObj[nextPossibleCell] &&
-    //   mapObj[nextPossibleCell].player !== player
-    // ) {
-    //   nextPossibleMoves[nextPossibleCell] = mapObj[nextPossibleCell];
-    //   return false;
-    // }
+    console.log(nextPossibleCell);
     if (!mapObj[nextPossibleCell]) {
+      console.log(mapObj[nextPossibleCell]);
       return (nextPossibleMoves[nextPossibleCell] = "empty");
-    } else
-      return (nextPossibleMoves[nextPossibleCell] = mapObj[nextPossibleCell]);
+    } else return {};
   };
 
   const findPath = (fromSquare) => {
@@ -441,28 +426,28 @@ const Board = () => {
         rookPath[squareToCheck] = "empty";
       } else return rookPath;
     };
-    const bishopFunctionInfo = (i) => {
-      addPossibleCellToPath(
-        moveFromRow + i,
-        moveFromCol + i,
-        nextPossibleMoves
-      );
-      addPossibleCellToPath(
-        moveFromRow - i,
-        moveFromCol - i,
-        nextPossibleMoves
-      );
-      addPossibleCellToPath(
-        moveFromRow + i,
-        moveFromCol - i,
-        nextPossibleMoves
-      );
-      addPossibleCellToPath(
-        moveFromRow - i,
-        moveFromCol + i,
-        nextPossibleMoves
-      );
-    };
+    // const bishopFunctionInfo = (i) => {
+    //   addPossibleCellToPath(
+    //     moveFromRow + i,
+    //     moveFromCol + i,
+    //     nextPossibleMoves
+    //   );
+    //   addPossibleCellToPath(
+    //     moveFromRow - i,
+    //     moveFromCol - i,
+    //     nextPossibleMoves
+    //   );
+    //   addPossibleCellToPath(
+    //     moveFromRow + i,
+    //     moveFromCol - i,
+    //     nextPossibleMoves
+    //   );
+    //   addPossibleCellToPath(
+    //     moveFromRow - i,
+    //     moveFromCol + i,
+    //     nextPossibleMoves
+    //   );
+    // };
     const pawnFunctionInfo = () => {
       addPossibleCellToPath(moveFromRow - 1, moveFromCol, nextPossibleMoves);
       addPossibleCellToPath(moveFromRow + 1, moveFromCol, nextPossibleMoves);
@@ -508,57 +493,56 @@ const Board = () => {
       return result;
     }
     // console.log(fromSquare, mapObj);
-    // if (mapObj[fromSquare].type === "knight") {
-    //   const getNextKnightMove = () => {
+    if (mapObj[fromSquare].type === "knight") {
+      const getNextKnightMove = () => {
+        addPossibleCellToPath(
+          moveFromRow - 2,
+          moveFromCol + 1,
+          nextPossibleMoves
+        );
+        addPossibleCellToPath(
+          moveFromRow - 2,
+          moveFromCol - 1,
+          nextPossibleMoves
+        );
+        addPossibleCellToPath(
+          moveFromRow + 2,
+          moveFromCol + 1,
+          nextPossibleMoves
+        );
+        addPossibleCellToPath(
+          moveFromRow + 2,
+          moveFromCol - 1,
+          nextPossibleMoves
+        );
 
-    //     addPossibleCellToPath(
-    //       moveFromRow - 2,
-    //       moveFromCol + 1,
-    //       nextPossibleMoves
-    //     );
-    //     addPossibleCellToPath(
-    //       moveFromRow - 2,
-    //       moveFromCol - 1,
-    //       nextPossibleMoves
-    //     );
-    //     addPossibleCellToPath(
-    //       moveFromRow + 2,
-    //       moveFromCol + 1,
-    //       nextPossibleMoves
-    //     );
-    //     addPossibleCellToPath(
-    //       moveFromRow + 2,
-    //       moveFromCol - 1,
-    //       nextPossibleMoves
-    //     );
+        addPossibleCellToPath(
+          moveFromRow - 1,
+          moveFromCol + 2,
+          nextPossibleMoves
+        );
+        addPossibleCellToPath(
+          moveFromRow - 1,
+          moveFromCol - 2,
+          nextPossibleMoves
+        );
+        addPossibleCellToPath(
+          moveFromRow + 1,
+          moveFromCol + 2,
+          nextPossibleMoves
+        );
+        addPossibleCellToPath(
+          moveFromRow + 1,
+          moveFromCol - 2,
+          nextPossibleMoves
+        );
+        return nextPossibleMoves;
+      };
+      const result = getNextKnightMove(fromSquare);
 
-    //     addPossibleCellToPath(
-    //       moveFromRow - 1,
-    //       moveFromCol + 2,
-    //       nextPossibleMoves
-    //     );
-    //     addPossibleCellToPath(
-    //       moveFromRow - 1,
-    //       moveFromCol - 2,
-    //       nextPossibleMoves
-    //     );
-    //     addPossibleCellToPath(
-    //       moveFromRow + 1,
-    //       moveFromCol + 2,
-    //       nextPossibleMoves
-    //     );
-    //     addPossibleCellToPath(
-    //       moveFromRow + 1,
-    //       moveFromCol - 2,
-    //       nextPossibleMoves
-    //     );
-    //     return nextPossibleMoves;
-    //   };
-    //   const result = getNextKnightMove(fromSquare);
-
-    //   console.log("kkk", result);
-    //   return result;
-    // }
+      console.log("kkk", result);
+      return result;
+    }
     if (mapObj[fromSquare].type === "rook") {
       console.log("rooked");
 
