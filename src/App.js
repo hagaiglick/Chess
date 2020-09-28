@@ -126,12 +126,14 @@ const Board = () => {
     nextPossibleCol,
     nextPossibleMoves
   ) => {
+    const player = mapObj[fromSquare].player;
+    const typeOfSquare = mapObj[fromSquare].type;
     const nextPossibleCell =
       nextPossibleRow.toString() + nextPossibleCol.toString();
 
     if (!mapObj[nextPossibleCell]) {
       return (nextPossibleMoves[nextPossibleCell] = "empty");
-    } else if (mapObj[nextPossibleCell].player !== mapObj[fromSquare].player) {
+    } else if (mapObj[nextPossibleCell].player !== player) {
       return (nextPossibleMoves[nextPossibleCell] = "eat");
     } else return {};
   };
@@ -144,32 +146,32 @@ const Board = () => {
       return {};
     }
     const [moveFromRow, moveFromCol] = parseToNumber(fromSquare);
-    const bishopFunctionInfo = (i) => {
-      addPossibleCellToPath(
-        fromSquare,
-        moveFromRow + i,
-        moveFromCol + i,
-        nextPossibleMoves
-      );
-      addPossibleCellToPath(
-        fromSquare,
-        moveFromRow - i,
-        moveFromCol - i,
-        nextPossibleMoves
-      );
-      addPossibleCellToPath(
-        fromSquare,
-        moveFromRow + i,
-        moveFromCol - i,
-        nextPossibleMoves
-      );
-      addPossibleCellToPath(
-        fromSquare,
-        moveFromRow - i,
-        moveFromCol + i,
-        nextPossibleMoves
-      );
-    };
+    // const bishopFunctionInfo = (i) => {
+    //   addPossibleCellToPath(
+    //     fromSquare,
+    //     moveFromRow + i,
+    //     moveFromCol + i,
+    //     nextPossibleMoves
+    //   );
+    //   addPossibleCellToPath(
+    //     fromSquare,
+    //     moveFromRow - i,
+    //     moveFromCol - i,
+    //     nextPossibleMoves
+    //   );
+    //   addPossibleCellToPath(
+    //     fromSquare,
+    //     moveFromRow + i,
+    //     moveFromCol - i,
+    //     nextPossibleMoves
+    //   );
+    //   addPossibleCellToPath(
+    //     fromSquare,
+    //     moveFromRow - i,
+    //     moveFromCol + i,
+    //     nextPossibleMoves
+    //   );
+    // };
     const pawnFunctionInfo = () => {
       addPossibleCellToPath(
         fromSquare,
@@ -331,54 +333,110 @@ const Board = () => {
       console.log("kkk", result);
       return result;
     }
-    if (mapObj[fromSquare].type === "bishop") {
-      const getNextBishopMove = () => {
-        for (let i = fromSquare[0]; i <= 7; i++) {
-          bishopFunctionInfo(i);
-        }
-        for (let i = fromSquare[0]; i >= 0; i--) {
-          bishopFunctionInfo(i);
-        }
-        return nextPossibleMoves;
-      };
-      const result = getNextBishopMove(fromSquare);
+    // if (mapObj[fromSquare].type === "bishop") {
+    //   const getNextBishopMove = () => {
+    //     for (let i = fromSquare[0]; i <= 7; i++) {
+    //       bishopFunctionInfo(i);
+    //     }
+    //     for (let i = fromSquare[0]; i >= 0; i--) {
+    //       bishopFunctionInfo(i);
+    //     }
+    //     return nextPossibleMoves;
+    //   };
+    //   const result = getNextBishopMove(fromSquare);
 
-      console.log("kkk", result);
-      return result;
-    }
-    if (mapObj[fromSquare].type === "queen") {
-      const getNextQueenMove = () => {
-        for (let i = 1; i <= 7; i++) {
-          bishopFunctionInfo(i);
-        }
-        return nextPossibleMoves;
+    //   console.log("kkk", result);
+    //   return result;
+    // }
+    if (
+      mapObj[fromSquare].type === "bishop" ||
+      mapObj[fromSquare].type === "queen"
+    ) {
+      const getSquareAboveAndLeft = (square) => {
+        //getting the string square and return the next square going up as a number
+        const squareNum = Number(square);
+        return squareNum - 11;
       };
-      const result = getNextQueenMove(fromSquare);
-
-      console.log("kkk", result);
-      return result;
+      const getSquareAboveAndRight = (square) => {
+        //getting the string square and return the next square going up as a number
+        const squareNum = Number(square);
+        return squareNum - 9;
+      };
+      const getSquareDownAndLeft = (square) => {
+        //getting the string square and return the next square going up as a number
+        const squareNum = Number(square);
+        return squareNum + 9;
+      };
+      const getSquareDownAndRight = (square) => {
+        //getting the string square and return the next square going up as a number
+        const squareNum = Number(square);
+        return squareNum + 11;
+      };
+      const movableSquaresAboveAndLeft = findMovableSquaresInDirection({
+        startingSquare: fromSquare,
+        getNextSquareFn: getSquareAboveAndLeft,
+        mapObj,
+      });
+      const movableSquaresAboveAndRight = findMovableSquaresInDirection({
+        startingSquare: fromSquare,
+        getNextSquareFn: getSquareAboveAndRight,
+        mapObj,
+      });
+      const movableSquaresDownAndLeft = findMovableSquaresInDirection({
+        startingSquare: fromSquare,
+        getNextSquareFn: getSquareDownAndLeft,
+        mapObj,
+      });
+      const movableSquaresDownAndRight = findMovableSquaresInDirection({
+        startingSquare: fromSquare,
+        getNextSquareFn: getSquareDownAndRight,
+        mapObj,
+      });
+      console.log("kkk", movableSquaresAboveAndLeft);
+      console.log("kkk", movableSquaresAboveAndRight);
+      return {
+        ...movableSquaresAboveAndLeft,
+        ...movableSquaresAboveAndRight,
+        ...movableSquaresDownAndLeft,
+        ...movableSquaresDownAndRight,
+      };
     }
+
     if (mapObj[fromSquare].type === "king") {
       const getNextKingMove = () => {
         pawnFunctionInfo();
         addPossibleCellToPath(
+          fromSquare,
           moveFromRow + 1,
           moveFromCol - 1,
           nextPossibleMoves
         );
         addPossibleCellToPath(
+          fromSquare,
           moveFromRow + 1,
           moveFromCol + 1,
           nextPossibleMoves
         );
-        addPossibleCellToPath(moveFromRow, moveFromCol - 1, nextPossibleMoves);
-        addPossibleCellToPath(moveFromRow, moveFromCol + 1, nextPossibleMoves);
         addPossibleCellToPath(
+          fromSquare,
+          moveFromRow,
+          moveFromCol - 1,
+          nextPossibleMoves
+        );
+        addPossibleCellToPath(
+          fromSquare,
+          moveFromRow,
+          moveFromCol + 1,
+          nextPossibleMoves
+        );
+        addPossibleCellToPath(
+          fromSquare,
           moveFromRow - 1,
           moveFromCol - 1,
           nextPossibleMoves
         );
         addPossibleCellToPath(
+          fromSquare,
           moveFromRow - 1,
           moveFromCol + 1,
           nextPossibleMoves
@@ -390,7 +448,10 @@ const Board = () => {
       console.log("kkk", result);
       return result;
     }
-    if (mapObj[fromSquare].type === "rook") {
+    if (
+      mapObj[fromSquare].type === "rook" ||
+      mapObj[fromSquare].type === "queen"
+    ) {
       console.log("rooked");
 
       // get's the square (index) of the square above the given  index
