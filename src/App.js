@@ -331,6 +331,65 @@ const Board = () => {
       console.log("kkk", result);
       return result;
     }
+    if (mapObj[fromSquare].type === "bishop") {
+      const getNextBishopMove = () => {
+        for (let i = fromSquare[0]; i <= 7; i++) {
+          bishopFunctionInfo(i);
+        }
+        for (let i = fromSquare[0]; i >= 0; i--) {
+          bishopFunctionInfo(i);
+        }
+        return nextPossibleMoves;
+      };
+      const result = getNextBishopMove(fromSquare);
+
+      console.log("kkk", result);
+      return result;
+    }
+    if (mapObj[fromSquare].type === "queen") {
+      const getNextQueenMove = () => {
+        for (let i = 1; i <= 7; i++) {
+          bishopFunctionInfo(i);
+        }
+        return nextPossibleMoves;
+      };
+      const result = getNextQueenMove(fromSquare);
+
+      console.log("kkk", result);
+      return result;
+    }
+    if (mapObj[fromSquare].type === "king") {
+      const getNextKingMove = () => {
+        pawnFunctionInfo();
+        addPossibleCellToPath(
+          moveFromRow + 1,
+          moveFromCol - 1,
+          nextPossibleMoves
+        );
+        addPossibleCellToPath(
+          moveFromRow + 1,
+          moveFromCol + 1,
+          nextPossibleMoves
+        );
+        addPossibleCellToPath(moveFromRow, moveFromCol - 1, nextPossibleMoves);
+        addPossibleCellToPath(moveFromRow, moveFromCol + 1, nextPossibleMoves);
+        addPossibleCellToPath(
+          moveFromRow - 1,
+          moveFromCol - 1,
+          nextPossibleMoves
+        );
+        addPossibleCellToPath(
+          moveFromRow - 1,
+          moveFromCol + 1,
+          nextPossibleMoves
+        );
+        return nextPossibleMoves;
+      };
+      const result = getNextKingMove(fromSquare);
+
+      console.log("kkk", result);
+      return result;
+    }
     if (mapObj[fromSquare].type === "rook") {
       console.log("rooked");
 
@@ -483,63 +542,3 @@ function App() {
 }
 
 export default App;
-// if (mapObj[fromSquare].type === "bishop") {
-//   const getNextBishopMove = () => {
-//     for (let i = fromSquare[0]; i <= 7; i++) {
-//       bishopFunctionInfo(i);
-//     }
-//     for (let i = fromSquare[0]; i >= 0; i--) {
-//       bishopFunctionInfo(i);
-//     }
-//     return nextPossibleMoves;
-//   };
-//   const result = getNextBishopMove(fromSquare);
-
-//   console.log("kkk", result);
-//   return result;
-// }
-// if (mapObj[fromSquare].type === "queen") {
-//   const getNextQueenMove = () => {
-//     for (let i = 1; i <= 7; i++) {
-//       bishopFunctionInfo(i);
-//       rookFunctionInfo(i);
-//     }
-//     return nextPossibleMoves;
-//   };
-//   const result = getNextQueenMove(fromSquare);
-
-//   console.log("kkk", result);
-//   return result;
-// }
-// if (mapObj[fromSquare].type === "king") {
-//   const getNextKingMove = () => {
-//     pawnFunctionInfo();
-//     addPossibleCellToPath(
-//       moveFromRow + 1,
-//       moveFromCol - 1,
-//       nextPossibleMoves
-//     );
-//     addPossibleCellToPath(
-//       moveFromRow + 1,
-//       moveFromCol + 1,
-//       nextPossibleMoves
-//     );
-//     addPossibleCellToPath(moveFromRow, moveFromCol - 1, nextPossibleMoves);
-//     addPossibleCellToPath(moveFromRow, moveFromCol + 1, nextPossibleMoves);
-//     addPossibleCellToPath(
-//       moveFromRow - 1,
-//       moveFromCol - 1,
-//       nextPossibleMoves
-//     );
-//     addPossibleCellToPath(
-//       moveFromRow - 1,
-//       moveFromCol + 1,
-//       nextPossibleMoves
-//     );
-//     return nextPossibleMoves;
-//   };
-//   const result = getNextKingMove(fromSquare);
-
-//   console.log("kkk", result);
-//   return result;
-// }
