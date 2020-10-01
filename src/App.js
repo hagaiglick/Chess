@@ -146,32 +146,6 @@ const Board = () => {
       return {};
     }
     const [moveFromRow, moveFromCol] = parseToNumber(fromSquare);
-    // const bishopFunctionInfo = (i) => {
-    //   addPossibleCellToPath(
-    //     fromSquare,
-    //     moveFromRow + i,
-    //     moveFromCol + i,
-    //     nextPossibleMoves
-    //   );
-    //   addPossibleCellToPath(
-    //     fromSquare,
-    //     moveFromRow - i,
-    //     moveFromCol - i,
-    //     nextPossibleMoves
-    //   );
-    //   addPossibleCellToPath(
-    //     fromSquare,
-    //     moveFromRow + i,
-    //     moveFromCol - i,
-    //     nextPossibleMoves
-    //   );
-    //   addPossibleCellToPath(
-    //     fromSquare,
-    //     moveFromRow - i,
-    //     moveFromCol + i,
-    //     nextPossibleMoves
-    //   );
-    // };
     const pawnFunctionInfo = () => {
       addPossibleCellToPath(
         fromSquare,
@@ -333,21 +307,6 @@ const Board = () => {
       console.log("kkk", result);
       return result;
     }
-    // if (mapObj[fromSquare].type === "bishop") {
-    //   const getNextBishopMove = () => {
-    //     for (let i = fromSquare[0]; i <= 7; i++) {
-    //       bishopFunctionInfo(i);
-    //     }
-    //     for (let i = fromSquare[0]; i >= 0; i--) {
-    //       bishopFunctionInfo(i);
-    //     }
-    //     return nextPossibleMoves;
-    //   };
-    //   const result = getNextBishopMove(fromSquare);
-
-    //   console.log("kkk", result);
-    //   return result;
-    // }
     if (
       mapObj[fromSquare].type === "bishop" ||
       mapObj[fromSquare].type === "queen"
